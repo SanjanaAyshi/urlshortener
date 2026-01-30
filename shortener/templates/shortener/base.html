@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>URL Shortener</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Tahoma", "Pixelated MS Sans Serif", sans-serif;
+            background: linear-gradient(135deg, #008080 0%, #004040 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .win98-container {
+            width: 30rem;
+            margin: 2rem auto;
+            position: relative;
+            --win98-blue: #0a246a;
+            --win98-light: #c0c0c0;
+            --win98-dark: #808080;
+            --win98-white: #ffffff;
+            --win98-black: #000000;
+        }
+
+        .win98-window {
+            background: var(--win98-light);
+            border: 2px solid;
+            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+            position: relative;
+            z-index: 10;
+        }
+
+        .win98-titlebar {
+            background: linear-gradient(to right, var(--win98-blue), #0a248a);
+            color: white;
+            padding: 3px 2px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--win98-dark);
+        }
+
+        .win98-title {
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 2px;
+            letter-spacing: 0.5px;
+        }
+
+        .win98-controls {
+            display: flex;
+            gap: 2px;
+            margin-right: 2px;
+        }
+
+        .win98-button {
+            width: 16px;
+            height: 14px;
+            background: var(--win98-light);
+            border: 1px solid;
+            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .win98-button:active {
+            border-color: var(--win98-dark) var(--win98-white) var(--win98-white) var(--win98-dark);
+        }
+
+        .win98-content {
+            padding: 15px;
+        }
+
+        .win98-menu-bar {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+            padding: 2px 5px;
+            background: var(--win98-light);
+            border: 1px solid;
+            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+        }
+
+        .win98-menu-item {
+            font-size: 0.8rem;
+            cursor: pointer;
+            padding: 1px 3px;
+        }
+
+        .win98-menu-item:hover {
+            background: var(--win98-blue);
+            color: white;
+        }
+
+        .win98-status-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--win98-dark);
+            color: white;
+            padding: 2px 5px;
+            font-size: 0.7rem;
+            border-top: 1px solid var(--win98-white);
+            min-height: 18px;
+        }
+
+        .win98-status-indicators {
+            display: flex;
+            gap: 5px;
+        }
+
+        .win98-indicator {
+            background: var(--win98-white);
+            color: var(--win98-black);
+            padding: 0 3px;
+            border: 1px solid;
+            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+            font-weight: bold;
+        }
+
+        .win98-resize-handle {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 15px;
+            height: 15px;
+            background: linear-gradient(135deg,
+                    transparent 0%,
+                    transparent 50%,
+                    var(--win98-dark) 50%,
+                    var(--win98-dark) 60%,
+                    transparent 60%);
+            cursor: nw-resize;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="win98-container">
+        <div class="win98-window">
+            <div class="win98-titlebar">
+                <div class="win98-title">🔗 URL SHORTENER</div>
+                <div class="win98-controls">
+                    <div class="win98-button win98-minimize">_</div>
+                    <div class="win98-button win98-maximize">□</div>
+                    <div class="win98-button win98-close">×</div>
+                </div>
+            </div>
+            <div class="win98-content">
+                <div class="win98-menu-bar">
+                    <span class="win98-menu-item">File</span>
+                    <span class="win98-menu-item">Edit</span>
+                    <span class="win98-menu-item">View</span>
+                    <span class="win98-menu-item">Help</span>
+                </div>
+
+                {% block content %}
+                {% endblock %}
+
+            </div>
+            <div class="win98-status-bar">
+                <div class="win98-status-text">Ready</div>
+                <div class="win98-status-indicators">
+                    <div class="win98-indicator">NUM</div>
+                    <div class="win98-indicator">CAPS</div>
+                </div>
+            </div>
+            <div class="win98-resize-handle"></div>
+        </div>
+    </div>
+</body>
+
+</html>
