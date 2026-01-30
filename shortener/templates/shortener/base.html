@@ -110,12 +110,19 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            background: var(--win98-dark);
-            color: white;
+            background: var(--win98-light);
+            color: var(--win98-black);
             padding: 2px 5px;
             font-size: 0.7rem;
-            border-top: 1px solid var(--win98-white);
-            min-height: 18px;
+            border-top: 2px solid;
+            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+            min-height: 22px;
+        }
+
+        .win98-status-text {
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .win98-status-indicators {
@@ -128,7 +135,7 @@
             color: var(--win98-black);
             padding: 0 3px;
             border: 1px solid;
-            border-color: var(--win98-white) var(--win98-dark) var(--win98-dark) var(--win98-white);
+            border-color: var(--win98-dark) var(--win98-white) var(--win98-white) var(--win98-dark);
             font-weight: bold;
         }
 
@@ -145,6 +152,63 @@
                     var(--win98-dark) 60%,
                     transparent 60%);
             cursor: nw-resize;
+        }
+
+        /* About Me Button - Floating Style */
+        .about-me-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .win98-btn {
+            font-family: "Tahoma", sans-serif;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            background: #ffffff;
+            box-shadow:
+                inset -1px -1px #0a0a0a,
+                inset 1px 1px #ffffff,
+                inset -2px -2px #808080,
+                inset 2px 2px #dfdfdf;
+            font-size: 12px;
+            padding: 6px 15px;
+            color: #000;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .win98-btn:hover {
+            background: #d4d4d4;
+        }
+
+        .win98-btn:active {
+            box-shadow:
+                inset -1px -1px #ffffff,
+                inset 1px 1px #0a0a0a,
+                inset -2px -2px #dfdfdf,
+                inset 2px 2px #808080;
+            padding: 7px 14px 5px 16px;
+        }
+
+        .win98-btn-icon {
+            font-size: 14px;
+        }
+
+        /* Credits text in status bar */
+        .credits-link {
+            color: #0000ff;
+            text-decoration: none;
+            font-size: 0.7rem;
+        }
+
+        .credits-link:hover {
+            text-decoration: underline;
+            color: #ff0000;
         }
     </style>
 </head>
@@ -173,7 +237,13 @@
 
             </div>
             <div class="win98-status-bar">
-                <div class="win98-status-text">Ready</div>
+                <div class="win98-status-text">
+                    <span>Ready</span>
+                    <span>|</span>
+                    <a href="https://protfolio-sanjana.vercel.app/" target="_blank" class="credits-link">
+                        Made by Sanjana ✨
+                    </a>
+                </div>
                 <div class="win98-status-indicators">
                     <div class="win98-indicator">NUM</div>
                     <div class="win98-indicator">CAPS</div>
@@ -181,6 +251,14 @@
             </div>
             <div class="win98-resize-handle"></div>
         </div>
+    </div>
+
+    <!-- Floating About Me Button -->
+    <div class="about-me-floating">
+        <a href="https://protfolio-sanjana.vercel.app/" target="_blank" class="win98-btn">
+            <span class="win98-btn-icon">👤</span>
+            <span>About Me</span>
+        </a>
     </div>
 </body>
 
