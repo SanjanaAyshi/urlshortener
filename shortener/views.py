@@ -1,22 +1,28 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import URL, generate_short_url
+from django.shortcuts import render, redirect
+from django.core.cache import cache
+from django.http import Http404
 import qrcode
 import base64
 from io import BytesIO
+import random
+import string
+
+def generate_short_code():
+    characters = string.ascii_letters + string.digits
+    short_code = ''.join(random.choice(characters) for _ in range(6))
+    return short_code
 
 def home(request):
     context = {}
 
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
-        shorter_url = generate_short_url()
+        short_code = generate_short_code()
 
-        url_object = URL.objects.create(
-            original_url=original_url,
-            shorter_url=shorter_url
-        )
+        # Store in cache (timeout=None means forever until restart)
+        cache.set(short_code, original_url, timeout=None)
 
-        short_url = request.build_absolute_uri(shorter_url + '/')
+        short_url = request.build_absolute_uri(short_code + '/')
 
         # Generate QR Code
         qr = qrcode.QRCode(
@@ -27,10 +33,8 @@ def home(request):
         qr.add_data(short_url)
         qr.make(fit=True)
 
-        # Create QR image
         qr_image = qr.make_image(fill_color="black", back_color="white")
 
-        # Convert to base64
         buffer = BytesIO()
         qr_image.save(buffer, format='PNG')
         buffer.seek(0)
@@ -42,5 +46,10 @@ def home(request):
     return render(request, 'shortener/home.html', context)
 
 def redirect_url(request, shorter_url):
-    url_object = get_object_or_404(URL, shorter_url=shorter_url)
-    return redirect(url_object.original_url)
+    # Get from cache
+    original_url = cache.get(shorter_url)
+    
+    if original_url:
+        return redirect(original_url)
+    else:
+        raise Http404("URL not found or expired")
