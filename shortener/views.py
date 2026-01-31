@@ -19,14 +19,20 @@ def home(request):
         original_url = request.POST.get('original_url')
         short_code = generate_short_code()
 
-        # Store in cache (timeout=None means forever until restart)
+        # Store in cache
         cache.set(short_code, original_url, timeout=None)
 
+        # Build short URL
         short_url = request.build_absolute_uri(short_code + '/')
+        
+        # Force HTTPS for production
+        if 'onrender.com' in request.get_host():
+            short_url = short_url.replace('http://', 'https://')
 
         # Generate QR Code
         qr = qrcode.QRCode(
             version=1,
+            error_correction=qrcode.constants.ERROR_CORRECT_L,
             box_size=10,
             border=4
         )
@@ -42,11 +48,11 @@ def home(request):
 
         context['short_url'] = short_url
         context['qr_code'] = qr_code
+        context['original_url'] = original_url
 
     return render(request, 'shortener/home.html', context)
 
 def redirect_url(request, shorter_url):
-    # Get from cache
     original_url = cache.get(shorter_url)
     
     if original_url:
