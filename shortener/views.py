@@ -15,6 +15,11 @@ def generate_short_code():
 def home(request):
     context = {}
 
+    # Check if we have result in session
+    if 'short_url' in request.session:
+        context['short_url'] = request.session.pop('short_url')
+        context['qr_code'] = request.session.pop('qr_code', None)
+
     if request.method == 'POST':
         original_url = request.POST.get('original_url')
         short_code = generate_short_code()
@@ -22,33 +27,38 @@ def home(request):
         # Store in cache
         cache.set(short_code, original_url, timeout=None)
 
-        # Build short URL
-        short_url = request.build_absolute_uri(short_code + '/')
+        # Build short URL - Force HTTPS
+        if request.is_secure() or 'onrender.com' in request.get_host():
+            scheme = 'https'
+        else:
+            scheme = 'http'
         
-        # Force HTTPS for production
-        if 'onrender.com' in request.get_host():
-            short_url = short_url.replace('http://', 'https://')
+        host = request.get_host()
+        short_url = f"{scheme}://{host}/{short_code}/"
 
         # Generate QR Code
         qr = qrcode.QRCode(
-            version=1,
-            error_correction=qrcode.constants.ERROR_CORRECT_L,
-            box_size=10,
-            border=4
+            version=2,
+            error_correction=qrcode.constants.ERROR_CORRECT_H,
+            box_size=12,
+            border=4,
         )
         qr.add_data(short_url)
         qr.make(fit=True)
 
-        qr_image = qr.make_image(fill_color="black", back_color="white")
-
+        qr_image = qr.make_image(fill_color="#000000", back_color="#FFFFFF")
+        
         buffer = BytesIO()
         qr_image.save(buffer, format='PNG')
         buffer.seek(0)
-        qr_code = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
 
-        context['short_url'] = short_url
-        context['qr_code'] = qr_code
-        context['original_url'] = original_url
+        # Store in session temporarily
+        request.session['short_url'] = short_url
+        request.session['qr_code'] = qr_base64
+
+        # Redirect to same page (PRG pattern)
+        return redirect('home')
 
     return render(request, 'shortener/home.html', context)
 
