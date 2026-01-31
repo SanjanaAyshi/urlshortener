@@ -14,28 +14,19 @@ def generate_short_code():
 
 def home(request):
     context = {}
-
-    # Check if we have result in session
-    if 'short_url' in request.session:
-        context['short_url'] = request.session.pop('short_url')
-        context['qr_code'] = request.session.pop('qr_code', None)
-
-    if request.method == 'POST':
-        original_url = request.POST.get('original_url')
-        short_code = generate_short_code()
-
-        # Store in cache
-        cache.set(short_code, original_url, timeout=None)
-
-        # Build short URL - Force HTTPS
+    
+    # Check if showing result
+    show_code = request.GET.get('code')
+    if show_code:
+        # Build the short URL
         if request.is_secure() or 'onrender.com' in request.get_host():
             scheme = 'https'
         else:
             scheme = 'http'
         
         host = request.get_host()
-        short_url = f"{scheme}://{host}/{short_code}/"
-
+        short_url = f"{scheme}://{host}/{show_code}/"
+        
         # Generate QR Code
         qr = qrcode.QRCode(
             version=2,
@@ -52,13 +43,19 @@ def home(request):
         qr_image.save(buffer, format='PNG')
         buffer.seek(0)
         qr_base64 = base64.b64encode(buffer.getvalue()).decode('utf-8')
+        
+        context['short_url'] = short_url
+        context['qr_code'] = qr_base64
 
-        # Store in session temporarily
-        request.session['short_url'] = short_url
-        request.session['qr_code'] = qr_base64
+    if request.method == 'POST':
+        original_url = request.POST.get('original_url')
+        short_code = generate_short_code()
 
-        # Redirect to same page (PRG pattern)
-        return redirect('home')
+        # Store in cache
+        cache.set(short_code, original_url, timeout=None)
+
+        # Redirect with code parameter
+        return redirect(f'/?code={short_code}')
 
     return render(request, 'shortener/home.html', context)
 

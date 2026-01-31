@@ -87,3 +87,6 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Security settings for HTTPS
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 CSRF_TRUSTED_ORIGINS = ['https://urlshortener-dwty.onrender.com']
+# At the bottom of settings.py, add:
+SESSION_ENGINE = 'django.contrib.sessions.backends.cache'
+SESSION_CACHE_ALIAS = 'default'
