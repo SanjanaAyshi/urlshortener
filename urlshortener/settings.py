@@ -1,5 +1,4 @@
 import os
-import dj_database_url
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -59,7 +58,7 @@ CACHES = {
     }
 }
 
-# Database - Still needed for Django admin/sessions but won't store URLs
+# Database - Minimal setup (not used for URLs)
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
